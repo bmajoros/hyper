@@ -15,9 +15,9 @@ from keras.layers import Conv1D, MaxPooling1D, AveragePooling1D
 from keras.layers import Dropout, Reshape, Dense, Activation, Flatten
 from keras.layers import BatchNormalization, InputLayer, Input, LSTM, GRU, Bidirectional, Add, Concatenate, LayerNormalization, MultiHeadAttention
 import keras_nlp
-from keras_nlp.layers import SinePositionEncoding
+from keras_nlp.layers import SinePositionEncoding, TransformerEncoder, RotaryEmbedding
 from keras import models
-from keras.models import Sequential, Model
+from keras.models import Sequential, Model, RotaryEmbedding
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, History, ModelCheckpoint
 import keras.backend as backend
