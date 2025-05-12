@@ -27,13 +27,12 @@ JOB_NAME="BlueSTARR"
 MEMORY=20000 #20000 = not enough if RevComp=1
 
 
-
 #=========================================================================
 #                     ARCHITECTURE / PARAMETER SPACE                      
 #=========================================================================
 PARM_SPACE={}
-PARM_SPACE["AttentionHeads"]=(1,2,3,4,5,6,7,10,20,30)
-PARM_SPACE["AttentionKeyDim"]=(0,) #(5,10,20,30,40) Now used by TransfEncoder
+PARM_SPACE["AttentionHeads"]=(1,2,3,4,5,6,7,10,20)
+PARM_SPACE["AttentionKeyDim"]=(5,5,10,10,25,50) Now used by TransfEncoder
 PARM_SPACE["AttentionResidualSkip"]=(0,) #(1,)
 PARM_SPACE["BatchSize"]=(128,)
 PARM_SPACE["ConvDropout"]=(0,1)
@@ -41,7 +40,7 @@ PARM_SPACE["ConvPad"]=("same",)
 PARM_SPACE["ConvPoolSize"]=(1,)
 PARM_SPACE["ConvResidualSkip"]=(0,)
 PARM_SPACE["DenseSizes"]=(0,)
-PARM_SPACE["DilationFactor"]=(1,) #(1, 2, 3)
+PARM_SPACE["DilationFactor"]=(1,1,1,1,1,2,3) #(1, 2, 3)
 PARM_SPACE["DropoutRate"]=(0.2, 0.35, 0.5)
 PARM_SPACE["EarlyStop"]=(10,)
 PARM_SPACE["Epochs"]=(200,)
@@ -51,8 +50,8 @@ PARM_SPACE["KernelSizes"]=(8,16,32,64,128)
 PARM_SPACE["LearningRate"]=(0.002,)
 PARM_SPACE["MaxTest"]=(999999999,)
 PARM_SPACE["MaxTrain"]=(3000000,)
-PARM_SPACE["NumAttentionLayers"]=(0,5,10)
-PARM_SPACE["NumConvLayers"]=(0,1,1,2,2,3,3,4,4,5,5,5,5,10,10,20)
+PARM_SPACE["NumAttentionLayers"]=(0,1,1,2,2,3,3,4,4,5,5,10)
+PARM_SPACE["NumConvLayers"]=(0,1,1,2,2,3,3,4,4,5,5,5,5,10)
 PARM_SPACE["NumDense"]=(0,)
 PARM_SPACE["NumKernelsFirstLayer"]=(1024,) #(250, 500, 1000, 2000)
 PARM_SPACE["NumKernelsLaterLayers"]=(512,256,128,64,32) #(10, 20, 30, 50)
@@ -94,7 +93,8 @@ def nextJob(slurm,subdir,jobNum,dataDir,modelDir):
         "hostname\n"+\
         "echo $SLURMD_NODENAME\n"+\
         "nvidia-smi\n"+\
-        GIT+"/BlueSTARR-Transformer.py "+configFile+" "+dataDir+" "+modelFile+"\n"
+        GIT+"/BlueSTARR-Transformer.py "+configFile+" "+dataDir+" "+\
+        modelFile+"\n"
     slurm.addCommand(cmd)
 
 def sample(values):
