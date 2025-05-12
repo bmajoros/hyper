@@ -16,43 +16,55 @@ import ProgramName
 from SlurmWriter import SlurmWriter
 
 #=========================================================================
-#                                 GLOBALS
+#                                 GLOBALS                                 
 #=========================================================================
-RUN_DIR="/hpc/group/majoroslab/deepstarr/git"
+GIT="/hpc/group/igvf/hyper/git"
+RUN_DIR=GIT
 addSbatchLines="#SBATCH --exclusive\n"  # +\
     #"#SBATCH --gres=gpu:RTXA5000:1\n" #,gpu:RTX6000:1\n"
 MAX_PARALLEL=300
-JOB_NAME="DeeperSTARR"
+JOB_NAME="BlueSTARR"
 MEMORY=20000 #20000 = not enough if RevComp=1
 
-# Parameter space
+
+
+#=========================================================================
+#                     ARCHITECTURE / PARAMETER SPACE                      
+#=========================================================================
 PARM_SPACE={}
-PARM_SPACE["RevComp"]=(0,)  #(0,1)
-PARM_SPACE["Verbose"]=(0,)
+PARM_SPACE["AttentionHeads"]=(0,) #(5,10,20,40,60)
+PARM_SPACE["AttentionKeyDim"]=(0,) #(5,10,20,30,40) Now used by TransfEncoder
+PARM_SPACE["AttentionResidualSkip"]=(0,) #(1,)
 PARM_SPACE["BatchSize"]=(128,)
-PARM_SPACE["Epochs"]=(100,)
-PARM_SPACE["EarlyStop"]=(10,)
-PARM_SPACE["DropoutRate"]=(0.5,) #(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4) # 0.3 - 0.9
-PARM_SPACE["LearningRate"]=(0.002,) #(0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01)
-  # was (0.001, 0.002, 0.003, 0.005, 0.01, 0.05, 0.1)
-#PARM_SPACE["NumRestarts"]=(1,)
-PARM_SPACE["NumConvLayers"]=(5,10,15,20,25,30) #(5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,30)# 6-12
-PARM_SPACE["ConvResidualSkip"]=(0,)
 PARM_SPACE["ConvDropout"]=(0,1)
 PARM_SPACE["ConvPad"]=("same",)
-PARM_SPACE["DilationFactor"]=(1,) #(1, 2, 3)
 PARM_SPACE["ConvPoolSize"]=(1,) #(1, 2, 5, 10, 20)
-PARM_SPACE["KernelSizes"]=(5, 10, 25, 50, 100) #(4, 6, 8, 10) #(8, 12, 20)
-PARM_SPACE["NumKernelsFirstLayer"]=(500,1000) #(250, 500, 1000, 2000)
-PARM_SPACE["NumKernelsLaterLayers"]=(25, 50, 100, 200) #(10, 20, 30, 50)
-PARM_SPACE["GlobalMaxPool"]=(0,)
+PARM_SPACE["ConvResidualSkip"]=(0,)
+PARM_SPACE["DenseSizes"]=(0,) #(20,50,100,200)
+PARM_SPACE["DilationFactor"]=(1,) #(1, 2, 3)
+PARM_SPACE["DropoutRate"]=(0.5,) #(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4) # 0.3 - 0.9
+PARM_SPACE["EarlyStop"]=(10,)
+PARM_SPACE["Epochs"]=(200,)
 PARM_SPACE["GlobalAvePool"]=(1,)
-PARM_SPACE["NumDense"]=(0,1,2) #(0,1,2)
-PARM_SPACE["DenseSizes"]=(50,100,256) #(20,50,100,200)
+PARM_SPACE["GlobalMaxPool"]=(0,)
+PARM_SPACE["KernelSizes"]=(8,16,32,64,128)
+PARM_SPACE["LearningRate"]=(0.002,) #(0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01)
+PARM_SPACE["MaxTest"]=(999999999,)
+PARM_SPACE["MaxTrain"]=(3000000,)
 PARM_SPACE["NumAttentionLayers"]=(0,) #(0,1,2)
-PARM_SPACE["AttentionHeads"]=(0,) #(5,10,20,40,60)
-PARM_SPACE["AttentionKeyDim"]=(0,) #(5,10,20,30,40)
-PARM_SPACE["AttentionResidualSkip"]=(0,) #(1,)
+PARM_SPACE["NumConvLayers"]=(5,10,15,20,25,30) #(5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,30)# 6-12
+PARM_SPACE["NumDense"]=(0,) #(0,1,2)
+#PARM_SPACE["NumKernelsFirstLayer"]=(500,1000) #(250, 500, 1000, 2000)
+#PARM_SPACE["NumKernelsLaterLayers"]=(25, 50, 100, 200) #(10, 20, 30, 50)
+#PARM_SPACE["NumRestarts"]=(1,)
+PARM_SPACE["NumKernels"]=(1024,512,256,128,64)
+PARM_SPACE["RevComp"]=(0,)
+PARM_SPACE["ShouldTest"]=(1,)
+PARM_SPACE["Tasks"]=("K562",)
+PARM_SPACE["TaskWeights"]=(1,)
+PARM_SPACE["UseCustomLoss"]=(0,)
+PARM_SPACE["Verbose"]=(2,)
+
 
 
 #=========================================================================
@@ -78,11 +90,11 @@ def nextJob(slurm,subdir,jobNum,dataDir,modelDir):
     writeConfig(configFile)
     cmd="cd "+RUN_DIR+"\n"+\
         "source ~/.bashrc\n"+\
-        "conda activate /hpc/home/bmajoros/flow2\n"+\
+        "conda activate /hpc/home/bmajoros/lab/conda/TF4\n"+\
         "hostname\n"+\
         "echo $SLURMD_NODENAME\n"+\
         "nvidia-smi\n"+\
-        "DeeperSTARR.py "+configFile+" "+dataDir+" "+modelFile+"\n"
+        GIT+"/BlueSTARR-Transformer.py "+configFile+" "+dataDir+" "+modelFile+"\n"
     slurm.addCommand(cmd)
 
 def sample(values):
@@ -133,7 +145,7 @@ def writeConfig(filename):
         print(key+" = "+str(assigned[key]),file=OUT)
     
     # Global pool: max or ave or neither
-    numDense=assigned["NumDense"]
+    #numDense=assigned["NumDense"]
     #globalPoolType=random.randint(0,2 if numDense>0 else 1)
     #if(globalPoolType==0):
     #    print("GlobalMaxPool = 1",file=OUT)
