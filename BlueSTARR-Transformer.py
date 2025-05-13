@@ -17,7 +17,8 @@ from keras.layers import BatchNormalization, InputLayer, Input, LSTM, GRU, Bidir
 import keras_nlp
 from keras_nlp.layers import SinePositionEncoding, TransformerEncoder, RotaryEmbedding
 from keras import models
-from keras.models import Sequential, Model, RotaryEmbedding
+from keras.models import Sequential, Model
+#from keras.layers import RotaryEmbedding
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, History, ModelCheckpoint
 import keras.backend as backend
@@ -26,7 +27,7 @@ import pandas as pd
 import numpy as np
 import ProgramName
 import sys
-import IOHelper
+#import IOHelper
 import SequenceHelper
 import random
 from scipy import stats
@@ -35,6 +36,7 @@ from scipy.stats import spearmanr
 from NeuralConfig import NeuralConfig
 from Rex import Rex
 rex=Rex()
+#from rotary_embedding_tensorflow import apply_rotary_emb, RotaryEmbedding
 
 
 

@@ -32,7 +32,7 @@ MEMORY=20000 #20000 = not enough if RevComp=1
 #=========================================================================
 PARM_SPACE={}
 PARM_SPACE["AttentionHeads"]=(1,2,3,4,5,6,7,10,20)
-PARM_SPACE["AttentionKeyDim"]=(5,5,10,10,25,50) Now used by TransfEncoder
+PARM_SPACE["AttentionKeyDim"]=(5,5,10,10,25,50) # Now used by TransfEncoder
 PARM_SPACE["AttentionResidualSkip"]=(0,) #(1,)
 PARM_SPACE["BatchSize"]=(128,)
 PARM_SPACE["ConvDropout"]=(0,1)
