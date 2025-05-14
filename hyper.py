@@ -18,13 +18,14 @@ from SlurmWriter import SlurmWriter
 #=========================================================================
 #                                 GLOBALS                                 
 #=========================================================================
+CONDA_ENV="/hpc/home/bmajoros/lab/conda/TF5"
 GIT="/hpc/group/igvf/hyper/git"
 RUN_DIR=GIT
 addSbatchLines="#SBATCH --exclusive\n"  # +\
     #"#SBATCH --gres=gpu:RTXA5000:1\n" #,gpu:RTX6000:1\n"
-MAX_PARALLEL=300
+MAX_PARALLEL=1 # need to change back to 300!
 JOB_NAME="BlueSTARR"
-MEMORY=20000 #20000 = not enough if RevComp=1
+MEMORY=100000 #20000 = not enough if RevComp=1
 
 
 #=========================================================================
@@ -89,7 +90,7 @@ def nextJob(slurm,subdir,jobNum,dataDir,modelDir):
     writeConfig(configFile)
     cmd="cd "+RUN_DIR+"\n"+\
         "source ~/.bashrc\n"+\
-        "conda activate /hpc/home/bmajoros/lab/conda/TF4\n"+\
+        "conda activate /hpc/home/bmajoros/lab/conda/TF5\n"+\
         "hostname\n"+\
         "echo $SLURMD_NODENAME\n"+\
         "nvidia-smi\n"+\

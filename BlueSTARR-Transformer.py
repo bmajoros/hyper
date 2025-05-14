@@ -358,7 +358,7 @@ def BuildModel(seqlen):
     # Optional Transformer encoder layers
     if(config.NumAttn>0):
         #x=x+keras_nlp.layers.SinePositionEncoding()(x)
-        x=x+keras_nlp.layers.RotaryEncoding()(x)
+        x=x+keras_nlp.layers.RotaryEmbedding()(x)
     for i in range(config.NumAttn):
         skip=x
         x=LayerNormalization()(x)
