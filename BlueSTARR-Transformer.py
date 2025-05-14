@@ -207,9 +207,9 @@ def mseClosure(taskNum):
                                 axis=1)
         #mse=tf.math.reduce_mean(tf.math.square(tf.math.exp(y_pred)-naiveTheta))
                                 ### axis=-1)
-        print("log(naiveTheta)=",tf.math.log(naiveTheta))
-        print("pred=",y_pred)
-        print("mse=",mse)
+        #print("log(naiveTheta)=",tf.math.log(naiveTheta))
+        #print("pred=",y_pred)
+        #print("mse=",mse)
         return mse
         #cor=stats.spearmanr(tf.math.exp(y_pred[taskNum].squeeze()),naiveTheta)
         #return cor
@@ -338,7 +338,7 @@ def BuildModel(seqlen):
     # Optional convolutional layers
     skip=None
     for i in range(config.NumConv):
-        #skip=x
+        skip=x
         if(config.KernelSizes[i]>=seqlen): continue
         dilation=1 if i==0 else config.DilationFactor
         if(i>0 and config.ConvDropout!=0): x=Dropout(config.DropoutRate)(x)
@@ -348,9 +348,11 @@ def BuildModel(seqlen):
                     dilation_rate=dilation)(x)
         x=BatchNormalization()(x)
         x=Activation('relu')(x)
-        #if(config.ConvResidualSkip!=0):
-        #    skip=tf.tile(skip,config.NumKernels[i])
-        #    x=Add()([x,skip])
+        if(config.ConvResidualSkip!=0 and
+           i-1>=0 and
+           config.NumKernels[i-1]==config.NumKernels[i]):
+            #skip=tf.tile(skip,config.NumKernels[i])
+            x=Add()([x,skip])
         if(config.ConvPoolSize>1 and seqlen>config.ConvPoolSize):
             x=MaxPooling1D(config.ConvPoolSize)(x)
             seqlen/=config.ConvPoolSize
