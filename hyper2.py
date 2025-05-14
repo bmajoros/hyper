@@ -117,6 +117,7 @@ def writeConfig(filename,parms):
     attnKeyDim=[keyDimension]*numAttn
     attnHeads=[HEADS]*numAttn
     denseSizes=PARM_SPACE["DenseSizes"]
+    numDense=len(denseSizes)
     if(numConv==0):
         kernelSizes=[0]; numKernels=[0]
     if(numAttn==0):
