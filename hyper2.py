@@ -21,9 +21,9 @@ from SlurmWriter import SlurmWriter
 CONDA_ENV="/hpc/home/bmajoros/lab/conda/TF5"
 GIT="/hpc/group/igvf/hyper/git"
 RUN_DIR=GIT
-addSbatchLines="#SBATCH --exclusive\n"   +\
-    "#SBATCH --gres=gpu:RTXA5000:1\n" #,gpu:RTX6000:1\n"
-MAX_PARALLEL=300
+addSbatchLines="#SBATCH --exclusive\n" #  +\
+#    "#SBATCH --gres=gpu:RTXA5000:1\n" #,gpu:RTX6000:1\n"
+MAX_PARALLEL=1 # CHANGE THIS BACK TO 300!
 JOB_NAME="BlueSTARR"
 MEMORY=100000
 
@@ -128,6 +128,9 @@ def writeConfig(filename,parms):
     assigned["AttentionHeads"]=",".join([str(x) for x in attnHeads])
     assigned["AttentionKeyDim"]=",".join([str(x) for x in attnKeyDim])
     assigned["DenseSizes"]=",".join([str(x) for x in denseSizes])
+    assigned["NumConvLayers"]=numConv
+    assigned["NumAttentionLayers"]=numAttn
+    
     for key in assigned:
         print(key+" = "+str(assigned[key]),file=OUT)
     OUT.close()
